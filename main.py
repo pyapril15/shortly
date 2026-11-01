@@ -27,4 +27,3 @@ def health():
 @app.post("/api/v1/shorten", response_model=ShortenUrlResponse, status_code=201)
 def shorten_url(body: ShortenUrlRequest):
     return to_response(body.url)
-
