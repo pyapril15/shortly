@@ -1,7 +1,10 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
 
+import services
+from database import get_db
 from schemas import ShortenUrlResponse, ShortenUrlRequest
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
@@ -25,5 +28,5 @@ def health():
 
 
 @app.post("/api/v1/shorten", response_model=ShortenUrlResponse, status_code=201)
-def shorten_url(body: ShortenUrlRequest):
-    return to_response(body.url)
+def shorten_url(body: ShortenUrlRequest, db: Session = Depends(get_db)):
+    return to_response(services.create_short_url(db, str(body.url)))
