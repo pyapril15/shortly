@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,13 @@ BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Shortly API", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def to_response(url: ShortenUrlResponse) -> ShortenUrlResponse:
@@ -50,4 +58,5 @@ def redirect(code: str, db: Session = Depends(get_db)):
     if not url:
         raise HTTPException(status_code=404, detail="Short link not found")
 
+    services.register_click(db, url)
     return RedirectResponse(url=url.original_url, status_code=307)
