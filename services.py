@@ -30,3 +30,7 @@ def create_short_url(db: Session, original_url: str) -> Url:
     db.refresh(url)
 
     return url
+
+
+def get_by_code(db: Session, code: str) -> Url | None:
+    return db.query(Url).filter(Url.short_code == code).first()
