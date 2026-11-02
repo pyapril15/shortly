@@ -34,3 +34,8 @@ def create_short_url(db: Session, original_url: str) -> Url:
 
 def get_by_code(db: Session, code: str) -> Url | None:
     return db.query(Url).filter(Url.short_code == code).first()
+
+
+def register_click(db: Session, url: Url) -> None:
+    url.click_count += 1
+    db.commit()

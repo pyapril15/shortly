@@ -35,6 +35,14 @@ def shorten_url(body: ShortenUrlRequest, db: Session = Depends(get_db)):
     return to_response(services.create_short_url(db, str(body.url)))
 
 
+@app.get("/api/v1/stats/{code}", response_model=ShortenUrlResponse, status_code=200)
+def stats(code: str, db: Session = Depends(get_db)):
+    url = services.get_by_code(db, code)
+    if not url:
+        raise HTTPException(status_code=404, detail="Short link not found")
+    return to_response(url)
+
+
 @app.get("/{code}")
 def redirect(code: str, db: Session = Depends(get_db)):
     url = services.get_by_code(db, code)
